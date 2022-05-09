@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="author" content="Alex Savva">
+<meta name="date" content="July 7th, 2016">
+<script type="text/javascript" src="vars.js" ></script>
+<script type="text/javascript" src="typedarray.js" ></script>
+<script type="text/javascript" src="Blob.js" ></script>
+<script type="text/javascript" src="var_functions.js" ></script>
+<script type="text/javascript" src="functions.js" ></script>
+<script type="text/javascript" src="ssl.js" ></script>
+<script type="text/javascript" src="savetofile.js" ></script>
+<script type="text/javascript" src="download.js" ></script>
+<script>
+
+
+function writeScriptOut()
+{
+	var text = '<table border=1>';
+	text += getPath() + '<BR />';
+		if ( getSelected('radio', 'action_type' ) == 'NewRequest' )
+		{
+			text += getRemChar () + "Create the kdb.<br />";
+			text += createKDB ('1');
+			text += "<BR />";
+			text += listCerts ();
+			text += "<BR />";
+			text += certRequest ();
+			text += "<BR />";
+			text += certRequestDetails ();
+		} else if ( getSelected('radio', 'action_type' ) == 'NewReceive' )
+		{
+			text = getRemChar () + "Receive the signed certificate into the kdb.<br />";
+			text += certRequestDetails ();
+			text += "<BR />";
+			text += certAddRoot ();
+			text += "<BR />";
+			text += certAddInter ();
+			text += "<BR />";
+			text += certReceive ();
+			text += "<BR />";
+			text += listCerts ();
+			text += "<BR />";
+			text += certDetails ();
+		} else if ( getSelected('radio', 'action_type' ) == 'RenewRequest' )
+		{
+			text = getRemChar () + "Create renewal request.<br />";
+			text += listCerts ();
+			text += "<BR />";
+			text += certDetails ();
+			text += "<BR />";
+			text += certRecreate ();
+		} else if ( getSelected('radio', 'action_type' ) == 'RenewReceive' )
+		{
+			text = getRemChar () + "Receive renewal cert.<br />";
+			text += listCerts ();
+			text += "<BR />";
+			text += certDetails ();
+			text += "<BR />";
+			text += certReceiveRenewal ();
+		} else if ( getSelected('radio', 'action_type' ) == 'p12' )
+		{
+			text = getRemChar () + "Extract p12 ( -stashed does not work to export cert ).<br />";
+			text += certExportp12 ();
+			text += "<BR />";
+			text += getRemChar () + "Import p12.<br />";
+			text += certDelete ();
+			text += "<BR />";
+			text += certImportp12 ();
+			text += "<BR />";
+			text += getRemChar () + "Enable Trust.<br />";
+			text += certTrust ();
+		} else if ( getSelected('radio', 'action_type' ) == 'sign' )
+		{
+			text = getRemChar () + "Sign your own.<br />";
+			text += createCaKDB (1);
+			text += "<BR />";
+			text += createRootCA ();
+			text += "<BR />";
+			text += createInterCA ();
+			text += "<BR />";
+			text += signInterCA ();
+			text += "<BR />";
+			text += certReceiveInter ();
+			text += "<BR />";
+			text += listCertsCa ();
+			text += "<BR />";
+			text += extractCa ();
+			text += "<BR />";
+			text += singCert ();
+		} else
+		{
+			text = '';
+		}	
+	text += '</table>';
+	if (document.getElementById('script_out') !== null )
+	{
+		document.getElementById('script_out').innerHTML = text;
+	}	
+
+}
+
+
+</script>
+</head>
+<body>
+<script>
+
+	createDivs ();
+	
+</script>
+<hr>
+<script>
+	createInputDivs ();
+	createExtraDivs(client_type);
+	createExtraDivs(ihs_type);
+	updateAll ();
+</script>
+
+<hr>
+<!-- clipboard Data only works in IE, does not work in Egde -->
+<div id="script_out" ondbclick="obj_name=document.getElementById('script_out');window.clipboardData.setData('Text', obj_name.innerText);">&nbsp;</div>
+<script>
+	writeScriptOut();
+</script>
+<p><button onclick="saveTextAsFile()">Save Text to File</button></p>
+</body>
+</html>
